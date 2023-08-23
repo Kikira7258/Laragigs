@@ -16,12 +16,13 @@ class ListingController extends Controller
             'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(6)
         ]);
     }
+    
 
     // show single listing
     public function show(Listing $listing) {
         return view('listings.show', [
             // the 'listing' will come from the 'Listing Model' then 'find id'
-            'listing' =>  $listing
+            'listing' => $listing
         ]);
     }
 
@@ -59,6 +60,37 @@ class ListingController extends Controller
     // Show Edit Form
     public function edit(Listing $listing) {
         return view('listing.edit', ['listing' => $listing]);
+    }
+
+      // Update Listing Data
+      public function update(Request $request, Listing $listing) {
+        // dd($request->file('logo')->store());
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => ['required'],
+            'location' => 'required',
+            'website' => 'required',
+            'email' => ['required', 'email'],
+            'tags' => 'required',
+            'description' => 'required'
+        ]);
+        
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logos', 'public')->store();
+        }
+
+        $listing->update($formFields);
+
+        // Session::flash('message', 'Listing Created');
+        
+        return back()->with('message', 'Listing Updated successfully!');
+    }
+
+
+    // Delete Listing
+    public function destroy(Listing $listing) {
+        $listing->delete();
+        return redirect('/')->with('message', 'Listing deleted successfully!');
     }
 }
 
