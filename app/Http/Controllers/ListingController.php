@@ -46,8 +46,12 @@ class ListingController extends Controller
             'description' => 'required'
         ]);
         
-        if($request->hasFile('logo')) {
+        //if($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logos', 'public')->store();
+        //}
+
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
         // Tie Listings to User
@@ -62,7 +66,7 @@ class ListingController extends Controller
 
     // Show Edit Form
     public function edit(Listing $listing) {
-        return view('listing.edit', ['listing' => $listing]);
+        return view('listings.edit', ['listing' => $listing]);
     }
 
       // Update Listing Data
@@ -85,8 +89,12 @@ class ListingController extends Controller
             'description' => 'required'
         ]);
         
-        if($request->hasFile('logo')) {
+        //if($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logos', 'public')->store();
+        //}
+
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
         $listing->update($formFields);
@@ -104,6 +112,7 @@ class ListingController extends Controller
         if($listing->user_id != auth()->id()) {
             abort(403, 'Unauthorized Action');
         }
+        
 
         $listing->delete();
         return redirect('/')->with('message', 'Listing deleted successfully!');
